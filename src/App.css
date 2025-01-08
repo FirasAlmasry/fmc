@@ -1,0 +1,47 @@
+.box {
+  animation: moving-box 1.5s ease-in-out infinite;
+}
+
+@keyframes moving-box {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.input {
+  width: 100%;
+  height: 40px;
+  outline: none !important;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: 0.2s all ease-in-out;
+  font-size: 16px;
+  color: inherit;
+}
+
+.input:focus {
+  border: 1px solid #3c1fab;
+}
+.svg path {
+  fill: #fff;
+}
+.test fieldset {
+  border: none !important;
+}
+.myDate {
+  width: 100%;
+}
+.react-datepicker-wrapper {
+  width: 100%;
+  margin: 8px 0;
+}
+.react-datepicker__input-container .react-datepicker__calendar-icon {
+  left: 0;
+}
