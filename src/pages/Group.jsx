@@ -120,7 +120,7 @@ const Group = () => {
               </FormControl>
             }
             {statusFilter === 'free' &&
-              <Btn onClick={sendData}>Chick In</Btn>
+              <Btn onClick={sendData} sx={{my:1}}>Chick In</Btn>
             }
           </Box>
           <TableContainer component={Paper}>
