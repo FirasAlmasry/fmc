@@ -1,18 +1,29 @@
 import { Checkbox, IconButton, TableBody, TableCell, TableRow } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useDeleteFile } from '../../hooks/files/useDeleteFile';
 import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
 import { useAcceptFile } from '../../hooks/files/useAcceptFile';
-const TableBodyData = ({ data, is_admin, statusFilter, selectedIds=[], setSelectedIds }) => {
-    const is_free = statusFilter === 'free'
-    const is_pending = statusFilter === 'pending'
+import ModelAddFile from '../Documents/ModelChickOut';
+import OutputIcon from '@mui/icons-material/Output';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+const TableBodyData = ({ data, is_admin, selectedIds = [], setSelectedIds,group_id }) => {
+
     const navigate = useNavigate()
     const { deleteFile } = useDeleteFile()
     const { acceptFile } = useAcceptFile()
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedFile, setSelectedFile] = useState();
 
+    const handleClickOpenDialog = (id) => {
+        setOpenDialog(true);
+        setSelectedFile(id)
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
 
     // Handle checkbox toggle
     const handleCheckboxToggle = (id) => {
@@ -27,15 +38,7 @@ const TableBodyData = ({ data, is_admin, statusFilter, selectedIds=[], setSelect
             <TableBody>
                 {data?.map((doc) => (
                     <TableRow key={doc.id}>
-                        {is_free && (
-                            <TableCell>
-                                <Checkbox
-                                    checked={selectedIds.includes(doc.id)}
-                                    onChange={() => handleCheckboxToggle(doc.id)}
-                                    color="primary"
-                                />
-                            </TableCell>
-                        )}
+
                         <TableCell>{doc.file_name}</TableCell>
                         <TableCell>{doc.status}</TableCell>
                         <TableCell>
@@ -46,14 +49,38 @@ const TableBodyData = ({ data, is_admin, statusFilter, selectedIds=[], setSelect
                                 <VisibilityIcon />
                             </IconButton>
                             {is_admin && (
+                                <>
+                                    <IconButton
+                                        aria-label="show"
+                                        onClick={() => navigate(`/${group_id}/details-user/${doc.id}`)}
+                                    >
+                                        <AdminPanelSettingsIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        aria-label="delete"
+                                        color="error"
+                                        onClick={() => deleteFile(doc.id)}>
+                                        <DeleteForeverIcon />
+                                    </IconButton>
+                                </>
+                            )}
+                            {doc?.status === 'locked' && doc.is_locked_by_you && (
                                 <IconButton
-                                    aria-label="delete"
-                                    color="error"
-                                    onClick={() => deleteFile(doc.id)}>
-                                    <DeleteForeverIcon />
+                                    aria-label="locked"
+                                    onClick={() => handleClickOpenDialog(doc.id)}>
+                                    <OutputIcon />
                                 </IconButton>
                             )}
-                            {is_admin && is_pending && (
+                            {doc?.status === 'free' && (
+
+                                <Checkbox
+                                    checked={selectedIds.includes(doc.id)}
+                                    onChange={() => handleCheckboxToggle(doc.id)}
+                                    color="primary"
+                                />
+
+                            )}
+                            {is_admin && doc?.status === 'pending' && (
                                 <IconButton
                                     aria-label="delete"
                                     color="success"
@@ -65,6 +92,12 @@ const TableBodyData = ({ data, is_admin, statusFilter, selectedIds=[], setSelect
                     </TableRow>
                 ))}
             </TableBody>
+            <ModelAddFile
+                openDialog={openDialog}
+                handleClickOpenDialog={handleClickOpenDialog}
+                setOpenDialog={setOpenDialog}
+                handleCloseDialog={handleCloseDialog}
+                selectedFile={selectedFile} />
         </>
     )
 }

@@ -10,6 +10,8 @@ import Home from './pages/Home';
 import Group from './pages/Group';
 import Layout from './pages/Layout';
 import FileDetails from './pages/FileDetails';
+import Details from './pages/Details';
+import DetailsDocument from './pages/DetailsDocument';
 
 // Pages
 
@@ -38,10 +40,14 @@ const RoutesPath = () => {
                             <ProtectedRoute>
                                 <Layout setSelectedComponent={setSelectedComponent}>
                                     <Routes>
-                                        <Route path="" element={<Home selectedComponent={selectedComponent}
-                                            setSelectedComponent={setSelectedComponent} />} />
+                                        <Route path=""
+                                            element={<Home
+                                                selectedComponent={selectedComponent}
+                                                setSelectedComponent={setSelectedComponent} />} />
                                         <Route path="group/:id" element={<Group />} />
                                         <Route path="file-details/:id" element={<FileDetails />} />
+                                        <Route path=":groupId/details-user/:id" element={<Details />} />
+                                        <Route path=":groupId/details-document/:id" element={<DetailsDocument />} />
                                     </Routes>
                                 </Layout>
                             </ProtectedRoute>

@@ -14,6 +14,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  IconButton,
 } from '@mui/material';
 import { useGroup } from '../hooks/groups/useGroup';
 import LoadingPage from '../components/global/LoadingPage';
@@ -21,10 +22,11 @@ import WrapperSection from '../components/global/WrapperSection';
 import EmptyContent from '../components/global/EmptyContent';
 import Btn from '../components/global/Btn';
 import ModelAddFile from '../components/Documents/ModelAddFile';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useFiles } from '../hooks/files/useFiles';
 import TableBodyData from '../components/Groups/TableBodyData';
 import { useChickIn } from '../hooks/files/useChickIn';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -34,7 +36,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 const Group = () => {
-
+  const navigate = useNavigate()
   const { id } = useParams();
   const {chickIn} = useChickIn()
   const [openDialog, setOpenDialog] = useState(false);
@@ -90,8 +92,7 @@ const Group = () => {
               flexWrap: 'wrap',
               marginBottom: 4,
               padding: 2,
-            }}
-          >
+            }}>
             <Typography variant="subtitle1">
               <strong>Admin Name:</strong> {admin?.name}
             </Typography>
@@ -111,15 +112,14 @@ const Group = () => {
                 <Select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  label="Status"
-                >
-                  <MenuItem value="free">All</MenuItem>
+                  label="Status">
+                  <MenuItem value="free">Free</MenuItem>
                   <MenuItem value="pending">Pending</MenuItem>
                   <MenuItem value="locked">locked</MenuItem>
                 </Select>
               </FormControl>
             }
-            {statusFilter === 'free' &&
+            {statusFilter === 'free' && (files.data.length > 0 || documents.length > 0) &&
               <Btn onClick={sendData} sx={{my:1}}>Chick In</Btn>
             }
           </Box>
@@ -127,11 +127,6 @@ const Group = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  {statusFilter === 'free' &&
-                    <TableCell>
-                      <strong>Select</strong>
-                    </TableCell>
-                  }
                   <TableCell>
                     <strong>File Name</strong>
                   </TableCell>
@@ -146,9 +141,9 @@ const Group = () => {
               <TableBodyData
                 data={is_admin ? files.data : documents}
                 is_admin={is_admin}
-                statusFilter={statusFilter}
                 setSelectedIds={setSelectedIds}
                 selectedIds={selectedIds}
+                group_id={id}
               />
             </Table>
           </TableContainer>
@@ -164,6 +159,7 @@ const Group = () => {
                     <TableRow>
                       <TableCell><strong>Name</strong></TableCell>
                       <TableCell><strong>Email</strong></TableCell>
+                      <TableCell><strong>Actions</strong></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -171,6 +167,14 @@ const Group = () => {
                       <TableRow key={index}>
                         <TableCell>{member.name}</TableCell>
                         <TableCell>{member.email || 'N/A'}</TableCell>
+                        <TableCell>
+                          <IconButton
+                            aria-label="show"
+                            onClick={() => navigate(`/${id}/details-document/${member.id}`)}
+                          >
+                            <AdminPanelSettingsIcon />
+                          </IconButton>
+                          </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
